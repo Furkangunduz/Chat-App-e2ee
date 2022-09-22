@@ -43,7 +43,9 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error("Invalid user Data")
     }
 })
-
+//@desc     Register a new User
+//@route    /api/users/login
+//@acces    public
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
 

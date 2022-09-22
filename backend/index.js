@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require("cors")
 const http = require('http');
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3002
 const errorHandler = require("./middlewares/errorHandler")
 require("dotenv").config()
 
@@ -9,9 +9,9 @@ const connectDB = require("./config/db");
 
 connectDB()
 const app = express();
+app.use(cors({ origin: '*' }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(cors())
 
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
@@ -37,5 +37,5 @@ io.on('connection', (socket) => {
 
 
 app.listen(PORT, () => {
-    console.log('listening on *:3000');
+    console.log('listening on *:' + PORT);
 });
