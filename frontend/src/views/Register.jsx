@@ -1,4 +1,5 @@
 import { FaUser } from 'react-icons/fa';
+import { NavLink } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import UserContext from '../context/UserContext';
 
@@ -37,7 +38,7 @@ function Register() {
 								Name
 							</label>
 							<input
-								autocomplete='off'
+								autoComplete='off'
 								className='w-[400px] border-2 border-black/10 py-2 pl-2 rounded-lg focus:outline-dark-blue/50 '
 								type='text'
 								id='name'
@@ -56,7 +57,7 @@ function Register() {
 							</label>
 							<input
 								className='w-[400px] border-2 border-black/10 py-2 pl-2 rounded-lg focus:outline-dark-blue/50 '
-								autocomplete='off'
+								autoComplete='off'
 								type='email'
 								id='email'
 								name='email'
@@ -74,7 +75,7 @@ function Register() {
 							</label>
 							<input
 								className='w-[400px] border-2 border-black/10 py-2 pl-2 rounded-lg focus:outline-dark-blue/50 '
-								autocomplete='off'
+								autoComplete='off'
 								type='password'
 								id='password'
 								name='password'
@@ -84,6 +85,14 @@ function Register() {
 								required
 							/>
 						</div>
+						<p className='text-right'>
+							Do you have an account?{' '}
+							<NavLink
+								className='text-dark-blue hover:text-dark-blue/50'
+								to='/login'>
+								Login.
+							</NavLink>
+						</p>
 						<div className='w-full grid place-content-center mt-2'>
 							<button
 								type='submit'

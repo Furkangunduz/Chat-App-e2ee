@@ -3,11 +3,10 @@ import UserContext from "../context/UserContext";
 
 export const useAuthStatus = () => {
     const [loggedIn, setLoggedIn] = useState(false)
-    const [checkingStatus, setCheckingStatus] = useState(false)
+    const [checkingStatus, setCheckingStatus] = useState(true)
 
     const { user } = useContext(UserContext);
 
-    console.log(user)
     useEffect(() => {
         setCheckingStatus(true)
         if (user) {

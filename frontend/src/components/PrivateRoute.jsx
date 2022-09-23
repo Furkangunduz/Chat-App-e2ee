@@ -1,13 +1,16 @@
 import { useNavigate, Outlet } from 'react-router-dom';
 import { useAuthStatus } from '../hooks/useAuthStatus';
-
+import { useEffect } from 'react';
 function PrivateRoute() {
 	const { loggedIn, checkingStatus } = useAuthStatus();
 	const navigate = useNavigate();
 
-	if (checkingStatus) return <h2>loading...</h2>;
+	useEffect(() => {
+		if (!loggedIn && !checkingStatus) navigate('/register');
+	}, [loggedIn]);
 
-	return loggedIn ? <Outlet /> : navigate('/login');
+	if (checkingStatus) return <h2>loading...</h2>;
+	if (loggedIn) return <Outlet />;
 }
 
 export default PrivateRoute;

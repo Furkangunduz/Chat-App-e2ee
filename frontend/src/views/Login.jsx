@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 
 function Login() {
@@ -35,7 +36,7 @@ function Login() {
 							</label>
 							<input
 								className='w-[400px] border-2 border-black/10 py-2 pl-2 rounded-lg focus:outline-dark-blue/50 '
-								autocomplete='off'
+								autoComplete='off'
 								type='email'
 								id='email'
 								name='email'
@@ -53,7 +54,7 @@ function Login() {
 							</label>
 							<input
 								className='w-[400px] border-2 border-black/10 py-2 pl-2 rounded-lg focus:outline-dark-blue/50 '
-								autocomplete='off'
+								autoComplete='off'
 								type='password'
 								id='password'
 								name='password'
@@ -63,6 +64,14 @@ function Login() {
 								required
 							/>
 						</div>
+						<p className='text-right'>
+							Don't you have an account?{' '}
+							<NavLink
+								className='text-dark-blue hover:text-dark-blue/50'
+								to='/register'>
+								Register.
+							</NavLink>
+						</p>
 						<div className='w-full grid place-content-center mt-2'>
 							<button
 								type='submit'

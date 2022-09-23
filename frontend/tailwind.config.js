@@ -8,6 +8,8 @@ module.exports = {
       colors: {
         "bg": "#CCCCCC",
         "dark-blue": "#1A66FF",
+        "input-bg": "#E0E0E0",
+        "friend-text-bg": "#CFCFCF",
       }
     },
   },
