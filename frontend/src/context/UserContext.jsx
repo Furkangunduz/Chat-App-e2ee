@@ -47,6 +47,11 @@ export const UserProvider = ({ children }) => {
 			});
 	};
 
+	const logOut = () => {
+		localStorage.removeItem('user');
+		navigate('/login');
+	};
+
 	return (
 		<UserContext.Provider
 			value={{
@@ -54,6 +59,7 @@ export const UserProvider = ({ children }) => {
 				setUserInfo,
 				register,
 				login,
+				logOut,
 			}}>
 			{children}
 		</UserContext.Provider>
