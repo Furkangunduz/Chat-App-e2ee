@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
 app.use("/api/users", require("./routes/userRoutes.js"))
 
 app.use(errorHandler)
+
 io.on('connection', (socket) => {
     socket.on("message", (message) => {
         console.log(message)
