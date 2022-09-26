@@ -5,9 +5,9 @@ import Button from '../components/Button';
 function Add_Friend() {
 	return (
 		<div className='grid place-content-center w-full h-screen overflow-hidden  bg-bg'>
-			<div className='h-[30vh] w-[60vw] border-2 border-black/20 rounded-xl bg-white'>
-				<div className='w-full h-full pt-10'>
-					<div className='flex justify-center items-start gap-6 '>
+			<div className='h-[30vh] w-[60vw]  border-2 border-black/20 rounded-xl bg-white'>
+				<div className='w-full h-full flex items-center justify-center'>
+					<div className='w-full flex justify-center items-center gap-6 '>
 						<label htmlFor='public_key'>
 							<h1 className='font-semibold text-xl mt-1'>Public Key :</h1>
 						</label>
@@ -20,9 +20,9 @@ function Add_Friend() {
 						<Button>ADD</Button>
 					</div>
 					{false && (
-						<div className='flex justify-center items-center'>
+						<div className='flex justify-center items-center '>
 							<Spinner />
-							<h1 className='font-semibold mb-[-100px]'>
+							<h1 className='absolute font-semibold text-3xl top-20 left-[40%]'>
 								Waiting for Friend Reply
 							</h1>
 						</div>
