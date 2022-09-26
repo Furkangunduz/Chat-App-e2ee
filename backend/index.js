@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 
 connectDB()
 const app = express();
+
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -21,7 +22,7 @@ const io = require("socket.io")(server, {
     }
 });
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
     res.send('<h1>Chat with end to end encryption</h1>');
 });
 

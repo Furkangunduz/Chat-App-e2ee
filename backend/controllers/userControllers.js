@@ -6,7 +6,7 @@ const User = require("../models/userModels")
 
 
 //@desc     Register a new User
-//@route    /api/users
+//@route    POST /api/users
 //@acces    public
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, private_key, public_key } = req.body
@@ -40,6 +40,7 @@ const registerUser = asyncHandler(async (req, res) => {
             email: user.email,
             public_key,
             private_key,
+            friends: user.friends,
             token: generateToken(user._id)
         })
     } else {
@@ -49,7 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 //@desc     Login a new User
-//@route    /api/users/login
+//@route    POST /api/users/login
 //@acces    public
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
@@ -62,14 +63,58 @@ const loginUser = asyncHandler(async (req, res) => {
             email: user.email,
             public_key: user.public_key,
             private_key: user.private_key,
+            friends: user.friends,
             token: generateToken(user._id)
         })
     } else {
         res.status(400)
         throw new Error("Invalid email or password")
     }
+})
+
+//@desc     Add friend to user by with public key
+//@route    POST /api/users/add-friend
+//@acces    private
+const addFriend = asyncHandler(async (req, res) => {
+
+    const { public_key } = req.body
+
+    const user = req.user
+
+    let friend = await User.findOne({ public_key })
+    //TODO socket connection 
+    //TODO Hide private key 
+    if (!friend) {
+        res.status(400)
+        throw new Error("Can't Find user.")
+    }
+
+    friend = { ...friend._doc }
+    delete friend.password
+    delete friend.friends
+    delete friend.private_key
+    delete friend.email
+    for (let i = 0; i < user.friends.length; i++) {
+        if (user.friends[i]._id.toString() == friend._id.toString()) {
+            res.status(400)
+            throw new Error("Already Friend.")
+        }
+    }
+
+    user.friends.push(friend)
+    user.save()
+    res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        public_key: user.public_key,
+        private_key: user.private_key,
+        friends: user.friends,
+        token: generateToken(user._id)
+    })
 
 })
+
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1w" })
@@ -77,5 +122,6 @@ const generateToken = (id) => {
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    addFriend
 }
