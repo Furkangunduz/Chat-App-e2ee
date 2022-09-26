@@ -2,7 +2,13 @@ import React from 'react';
 import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 
+import { useContext, useState } from 'react';
+import UserContext from '../context/UserContext';
+
 function Add_Friend() {
+	const { AddFriend } = useContext(UserContext);
+	const [friendPublicKey, setFriendPublicKey] = useState('');
+
 	return (
 		<div className='grid place-content-center w-full h-screen overflow-hidden  bg-bg'>
 			<div className='h-[30vh] w-[60vw]  border-2 border-black/20 rounded-xl bg-white'>
@@ -15,9 +21,18 @@ function Add_Friend() {
 							type='text'
 							id='public_key'
 							className='w-[50%] px-4 py-2 bg-input-bg rounded-lg '
+							value={friendPublicKey}
+							onChange={(e) => {
+								setFriendPublicKey(e.target.value);
+							}}
 							placeholder='Paste Here Your Friends Public Key'
 						/>
-						<Button>ADD</Button>
+						<div
+							onClick={() => {
+								AddFriend(friendPublicKey);
+							}}>
+							<Button>ADD</Button>
+						</div>
 					</div>
 					{false && (
 						<div className='flex justify-center items-center '>

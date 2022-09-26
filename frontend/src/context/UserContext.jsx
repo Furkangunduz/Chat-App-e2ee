@@ -1,12 +1,13 @@
 import { createContext, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 import RSA from '../utils/keygenerator';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+	//TODO Hide private key
 	const userStorage = JSON.parse(localStorage.getItem('user'));
 	const navigate = useNavigate();
 	const [userInfo, setUserInfo] = useState({
@@ -24,7 +25,6 @@ export const UserProvider = ({ children }) => {
 			public_exponent: keys.public_exponent.toString(),
 		})
 			.then((res) => {
-				console.log(res);
 				let user = res?.data || undefined;
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
@@ -33,6 +33,7 @@ export const UserProvider = ({ children }) => {
 				}
 			})
 			.catch((err) => {
+				toast(err?.response?.data?.message, { toastId: err?.response?.data?.message });
 				console.log(err?.response?.data?.message);
 				console.log(err?.response?.data?.stack);
 			});
@@ -41,7 +42,7 @@ export const UserProvider = ({ children }) => {
 	const login = async (loginCredential) => {
 		axios.post(process.env.REACT_APP_API_URL + '/users/login', loginCredential)
 			.then((res) => {
-				console.log(res?.data);
+				console.log(res?.data?.user);
 				let user = res?.data || undefined;
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
@@ -50,6 +51,7 @@ export const UserProvider = ({ children }) => {
 				}
 			})
 			.catch((err) => {
+				toast(err?.response?.data?.message, { toastId: err?.response?.data?.message });
 				console.log(err?.response?.data?.message);
 				console.log(err?.response?.data?.stack);
 			});
@@ -58,6 +60,36 @@ export const UserProvider = ({ children }) => {
 	const logOut = () => {
 		localStorage.removeItem('user');
 		navigate('/login');
+	};
+
+	const AddFriend = (public_key) => {
+		if (!public_key) {
+			console.log('must provide public key.');
+			toast('must provide public key.', { toastId: ' must provide public key.' });
+			return;
+		}
+		axios.post(
+			process.env.REACT_APP_API_URL + '/users/add-friend',
+			{ public_key },
+			{
+				headers: {
+					'Authorization': 'Bearer ' + userInfo.user.token,
+				},
+			}
+		)
+			.then((res) => {
+				let user = res?.data?.user || undefined;
+				if (user != undefined) {
+					setUserInfo((prev) => ({ ...prev, user: user }));
+					localStorage.setItem('user', JSON.stringify(user));
+				}
+			})
+			.catch((err) => {
+				toast(err?.response?.data?.message, { toastId: err?.response?.data?.message });
+				console.log(err?.response?.data?.message);
+				console.log(err?.response?.data?.stack);
+			});
+		navigate('/');
 	};
 
 	const generateKey = () => {
@@ -76,6 +108,7 @@ export const UserProvider = ({ children }) => {
 				register,
 				login,
 				logOut,
+				AddFriend,
 			}}>
 			{children}
 		</UserContext.Provider>

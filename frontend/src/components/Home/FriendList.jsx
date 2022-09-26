@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import Button from '../Button';
 import FriendListItem from './FriendListItem';
+import UserContext from '../../context/UserContext';
+import { useContext } from 'react';
 
 function FriendList() {
+	const { user } = useContext(UserContext);
+
 	return (
 		<div className='flex flex-col gap-10 min-w-[450px] h-screen pt-10 pl-10'>
 			<div className='relative'>
@@ -21,8 +25,8 @@ function FriendList() {
 				</div>
 
 				<div className='flex flex-col h-full gap-6 bg-white pt-6 overflow-auto  '>
-					{[1, 2, 3, 4, 5, 6, 7, 8, 9].map((_, index) => (
-						<FriendListItem key={index} />
+					{user.friends.map((user, index) => (
+						<FriendListItem user={user} key={index} />
 					))}
 				</div>
 			</div>
