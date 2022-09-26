@@ -11,7 +11,7 @@ const User = require("../models/userModels")
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, private_key, public_key } = req.body
     // handle later
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !private_key || !public_key) {
         res.status(400)
         throw new Error("Please include all fields")
     }
@@ -38,6 +38,8 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            public_key,
+            private_key,
             token: generateToken(user._id)
         })
     } else {
