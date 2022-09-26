@@ -35,7 +35,7 @@ class RSA {
         };
     }
 
-    static encrypt(encodedMsg, n, e) {
+    static encrypt(encodedMsg, n, e = bigInt(65537)) {
         return bigInt(encodedMsg).modPow(e, n);
     }
 
