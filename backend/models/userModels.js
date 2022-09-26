@@ -14,11 +14,21 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add a password"]
     },
-    isAdmin: {
-        type: Boolean,
-        required: true,
-        default: false
-    }
+    public_key: {
+        type: String,
+        required: [true, ""]
+    },
+    private_key: {
+        type: String,
+        required: [true, ""]
+    },
+    public_exponent: {
+        type: String,
+        required: [true, ""]
+    },
+    friends: [{
+        type: mongoose.Schema.Types.ObjectId,
+    }],
 }, { timestamps: true })
 
 

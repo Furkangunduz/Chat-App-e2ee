@@ -9,8 +9,8 @@ const User = require("../models/userModels")
 //@route    /api/users
 //@acces    public
 const registerUser = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body
-
+    const { name, email, password, private_key, public_key } = req.body
+    // handle later
     if (!name || !email || !password) {
         res.status(400)
         throw new Error("Please include all fields")
@@ -29,6 +29,8 @@ const registerUser = asyncHandler(async (req, res) => {
         name,
         email,
         password: hashedPassword,
+        public_key,
+        private_key, // handle later
     })
 
     if (user) {
@@ -43,7 +45,8 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error("Invalid user Data")
     }
 })
-//@desc     Register a new User
+
+//@desc     Login a new User
 //@route    /api/users/login
 //@acces    public
 const loginUser = asyncHandler(async (req, res) => {
@@ -55,6 +58,8 @@ const loginUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            public_key: user.public_key,
+            private_key: user.private_key,
             token: generateToken(user._id)
         })
     } else {
