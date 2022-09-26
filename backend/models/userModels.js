@@ -22,10 +22,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, ""]
     },
-    public_exponent: {
-        type: String,
-        required: [true, ""]
-    },
+
     friends: [{
         type: mongoose.Schema.Types.ObjectId,
     }],
