@@ -6,6 +6,7 @@ import Register from './views/Register'
 import PrivateRoute from './components/PrivateRoute'
 import StartChat from './views/StartChat'
 
+
 function App() {
   return (
     <Routes>
