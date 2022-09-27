@@ -14,7 +14,7 @@ function Key() {
 	return (
 		<div
 			onClick={copyPublicKey}
-			className='flex items-center gap-2 absolute top-4 left-24 border-2 border-black/20 bg-white px-6 py-2 rounded-lg cursor-pointer hover:-translate-y-[1px] hover:scale-[1.05] transition-all'>
+			className='flex items-center gap-2 border-2 border-black/20 bg-white px-6 py-2 rounded-lg cursor-pointer hover:-translate-y-[1px] hover:scale-[1.05] transition-all'>
 			<p>
 				<span style={{ userSelect: 'none' }} className='text-dark-blue font-bold mr-3'>
 					Your Public Key

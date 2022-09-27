@@ -4,7 +4,7 @@ import Home from './views/Home'
 import Login from './views/Login'
 import Register from './views/Register'
 import PrivateRoute from './components/PrivateRoute'
-import AddFriend from './views/AddFriend'
+import StartChat from './views/StartChat'
 
 function App() {
   return (
@@ -12,8 +12,8 @@ function App() {
       <Route path='/' element={<PrivateRoute />}>
         <Route path='/' element={<Home />} />
       </Route>
-      <Route path='/add-friend' element={<PrivateRoute />}>
-        <Route path='/add-friend' element={<AddFriend />} />
+      <Route path='/start-chat' element={<PrivateRoute />}>
+        <Route path='/start-chat' element={<StartChat />} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />

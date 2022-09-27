@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer components {
+	html,
+	body,
+	:root {
+		height: 100%;
+		@apply bg-bg;
+	}
 	::-webkit-scrollbar {
 		width: 7.5px;
 	}

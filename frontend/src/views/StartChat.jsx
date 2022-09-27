@@ -31,7 +31,7 @@ function Add_Friend() {
 							onClick={() => {
 								AddFriend(friendPublicKey);
 							}}>
-							<Button>ADD</Button>
+							<Button>START</Button>
 						</div>
 					</div>
 					{false && (
