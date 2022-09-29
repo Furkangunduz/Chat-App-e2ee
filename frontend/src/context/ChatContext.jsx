@@ -3,10 +3,10 @@ import { createContext, useState } from 'react';
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
-	const [activeChat, setActiveChat] = useState('123123');
+	const [activeChatUserName, setActiveChatUserName] = useState(null);
 
 	return (
-		<ChatContext.Provider value={{ activeChat, setActiveChat }}>
+		<ChatContext.Provider value={{ activeChatUserName, setActiveChatUserName }}>
 			{children}
 		</ChatContext.Provider>
 	);

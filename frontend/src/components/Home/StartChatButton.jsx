@@ -5,7 +5,7 @@ import Button from '../Button';
 function StartChatButton() {
 	return (
 		<Link to='/start-chat'>
-			<Button>Add Friend</Button>
+			<Button>Start Chat</Button>
 		</Link>
 	);
 }

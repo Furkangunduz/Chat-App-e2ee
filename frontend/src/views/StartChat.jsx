@@ -1,13 +1,12 @@
-import React from 'react';
+import { useState } from 'react';
 import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 
-import { useContext, useState } from 'react';
-import UserContext from '../context/UserContext';
-
-function Add_Friend() {
-	const { AddFriend } = useContext(UserContext);
+function StartChat({ socket }) {
 	const [friendPublicKey, setFriendPublicKey] = useState('');
+	const startChat = () => {
+		socket.emit('start-chat-request', friendPublicKey);
+	};
 
 	return (
 		<div className='grid place-content-center w-full h-screen overflow-hidden  bg-bg'>
@@ -15,7 +14,7 @@ function Add_Friend() {
 				<div className='w-full h-full flex items-center justify-center'>
 					<div className='w-full flex justify-center items-center gap-6 '>
 						<label htmlFor='public_key'>
-							<h1 className='font-semibold text-xl mt-1'>Public Key :</h1>
+							<h1 className='font-semibold text-xl mt-1'>Public Key</h1>
 						</label>
 						<input
 							type='text'
@@ -29,7 +28,7 @@ function Add_Friend() {
 						/>
 						<div
 							onClick={() => {
-								AddFriend(friendPublicKey);
+								startChat(friendPublicKey);
 							}}>
 							<Button>START</Button>
 						</div>
@@ -48,4 +47,4 @@ function Add_Friend() {
 	);
 }
 
-export default Add_Friend;
+export default StartChat;
