@@ -13,7 +13,6 @@ const socket = (server) => {
 
     io.on('connection', (socket) => {
         console.log('a user connected', socket.id);
-
         socket.on("save-user", ({ name, public_key }) => {
             let user = undefined
 
@@ -30,9 +29,8 @@ const socket = (server) => {
             user[1] = public_key
             user[2] = socket.id
 
-            console.log("active-users", activeUsers)
+            console.log("active-users length", activeUsers.length)
         })
-
         socket.on("start-chat-request", (public_key) => {
             if (!public_key) return
             let user = undefined
@@ -61,23 +59,30 @@ const socket = (server) => {
             console.log("sent request")
             responseWaiters.push({ waiter: user, from: friend })
             rooms.push([user, friend])
-            console.log(responseWaiters)
+            console.log("responseWaiters length ", responseWaiters.length)
             socket.emit("waiting-response")
             io.to(friend[2]).emit("start-chat-request", user)
         })
-
         socket.on("chat-request-accepted", () => {
-            responseWaiters.forEach((e) => {
+            responseWaiters.forEach((e, indx) => {
                 if (e.from[2] == socket.id) {
                     io.to(e.waiter).emit("chat-request-accepted", e.from)
+                    console.log("responseWaiters length :", responseWaiters.length)
+                    responseWaiters.splice(indx, 1)
+                    console.log("responseWaiters length after:", responseWaiters.length)
+
                 }
             })
         })
-
         socket.on("chat-request-declined", () => {
-            responseWaiters.forEach((e) => {
-                if (e.from == socket.id) {
-                    io.to(e.waiter).emit("chat-request-declined")
+            responseWaiters.forEach((e, indx) => {
+                if (e.from[2] == socket.id) {
+                    io.to(e.waiter[2]).emit("chat-request-declined")
+                    socket.emit("chat-request-declined")
+
+                    console.log("responseWaiters length :", responseWaiters.length)
+                    responseWaiters.splice(indx, 1)
+                    console.log("responseWaiters length after:", responseWaiters.length)
 
                     console.log("rooms length before delete: ", rooms.length)
                     rooms.forEach((room, index) => {
@@ -92,6 +97,17 @@ const socket = (server) => {
 
             })
 
+        })
+        socket.on("newMessage", (message) => {
+            console.log("new message received")
+            rooms.forEach((room) => {
+                room.forEach((user) => {
+                    if (user[2] != socket.id) {
+                        io.to(user[2]).emit("newMessage", message)
+                        return
+                    }
+                })
+            })
         })
     })
 }
