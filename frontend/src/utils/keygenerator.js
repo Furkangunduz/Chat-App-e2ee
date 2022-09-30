@@ -1,4 +1,5 @@
 const bigInt = require('big-integer');
+
 class RSA {
     static randomPrime(bits) {
         const min = bigInt.one.shiftLeft(bits - 1);
@@ -70,4 +71,4 @@ class RSA {
     }
 }
 
-module.exports = RSA
+module.exports = RSA;

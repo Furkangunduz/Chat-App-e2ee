@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 
+import ChatContext from '../context/ChatContext';
+
 function StartChat({ socket }) {
-	const [friendPublicKey, setFriendPublicKey] = useState('');
+	const { activeChatPublicKey, setActiveChatPublicKey } = useContext(ChatContext);
+
 	const startChat = () => {
-		socket.emit('start-chat-request', friendPublicKey);
+		socket.emit('start-chat-request', activeChatPublicKey);
 	};
 
 	return (
@@ -20,15 +23,15 @@ function StartChat({ socket }) {
 							type='text'
 							id='public_key'
 							className='w-[50%] px-4 py-2 bg-input-bg rounded-lg '
-							value={friendPublicKey}
+							value={activeChatPublicKey}
 							onChange={(e) => {
-								setFriendPublicKey(e.target.value);
+								setActiveChatPublicKey(e.target.value);
 							}}
 							placeholder='Paste Here Your Friends Public Key'
 						/>
 						<div
 							onClick={() => {
-								startChat(friendPublicKey);
+								startChat(activeChatPublicKey);
 							}}>
 							<Button>START</Button>
 						</div>

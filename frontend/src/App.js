@@ -13,7 +13,7 @@ function App() {
   return (
     <Routes>
       <Route path='/' element={<PrivateRoute />}>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<Home socket={socket} />} />
       </Route>
       <Route path='/start-chat' element={<PrivateRoute />}>
         <Route path='/start-chat' element={<StartChat socket={socket} />} />

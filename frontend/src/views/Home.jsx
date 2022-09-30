@@ -5,7 +5,7 @@ import Key from '../components/Home/Key';
 import LogOutButton from '../components/Home/LogOutButton';
 import StartChatButton from '../components/Home/StartChatButton';
 
-function Home() {
+function Home({ socket }) {
 	// eslint-disable-next-line
 	return (
 		<div className='bg-bg flex flex-col w-full h-full'>
@@ -16,7 +16,7 @@ function Home() {
 			</div>
 			<div className='flex justify-center'>
 				{/* <FriendList /> */}
-				<Chat />
+				<Chat socket={socket} />
 			</div>
 		</div>
 	);

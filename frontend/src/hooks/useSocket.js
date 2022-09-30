@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 
 import Usercontext from "../context/UserContext"
 import ChatContext from "../context/ChatContext";
-
+import RSA, { decode } from "../utils/keygenerator";
 
 export default function useSocket() {
     const [socket, setSocket] = useState(null)
@@ -15,7 +15,8 @@ export default function useSocket() {
     const navigate = useNavigate();
 
     const { user } = useContext(Usercontext)
-    const { setActiveChatUserName } = useContext(ChatContext)
+    const { setActiveChatUserName, setChatHistory,
+        setActiveChatPublicKey } = useContext(ChatContext)
 
     useEffect(() => {
         if (!socket) {
@@ -36,15 +37,24 @@ export default function useSocket() {
             setAskUserChatRequest(true)
             setChatRequestedUserName(user[0])
             setActiveChatUserName(user[0])
+            setActiveChatPublicKey(user[1])
         })
         socket.on("chat-request-accepted", (friend) => {
             setActiveChatUserName(friend[0])
+
             navigate("/")
             toast("Chat request accepted.", { toastId: "Chat request accepted." })
         })
         socket.on("chat-request-declined", () => {
-            toast("Chat request declined.", { toastId: "Chat request declined." })
+            console.log("declined")
             setActiveChatUserName(null)
+            setActiveChatPublicKey("")
+            toast("Chat request declined.", { toastId: "Chat request declined." })
+        })
+        socket.on("newMessage", (message) => {
+            console.log("new message received")
+            let decodedMessage = RSA.decode(RSA.decrypt(message, user.private_key, user.public_key))
+            setChatHistory((prev) => ([...prev, { sender: "friend", text: decodedMessage }]))
         })
         socket.on('connect', () => {
             setIsConnected(true);
@@ -69,9 +79,9 @@ export default function useSocket() {
     function showWindowConfirm() {
         if (window.confirm("Getting request for chat from " + chatRequestedUserName + ".Wanna accept ?")) {
             socket.emit("chat-request-accepted")
-
         } else {
             socket.emit("chat-request-declined")
+
         }
     }
     if (askUserChatRequest) {
