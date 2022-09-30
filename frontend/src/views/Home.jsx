@@ -9,7 +9,7 @@ function Home({ socket }) {
 	// eslint-disable-next-line
 	return (
 		<div className='bg-bg flex flex-col w-full h-full'>
-			<div className='mt-2 flex gap-10 mx-10 justify-center items-center bg-white py-2 rounded-lg'>
+			<div className=' w-full flex gap-10  justify-center items-center bg-white py-2 rounded-b-lg'>
 				<Key />
 				<StartChatButton />
 				<LogOutButton />
