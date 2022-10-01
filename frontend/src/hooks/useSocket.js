@@ -71,6 +71,12 @@ export default function useSocket() {
                 window.location.reload();
             }, 2000);
         })
+        socket.on("user-left", () => {
+            toast("friend disconnected")
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        })
         socket.on('connect', () => {
             if (user)
                 socket.emit("save-user", { name: user.name, public_key: user.public_key })

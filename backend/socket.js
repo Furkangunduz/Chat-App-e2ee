@@ -61,6 +61,7 @@ const socket = (server) => {
             console.log("sent request")
             responseWaiters.push({ waiter: user, from: friend })
             rooms.push([user, friend])
+            console.log("room created rooms length : ", rooms.length)
             console.log("responseWaiters length ", responseWaiters.length)
             socket.emit("waiting-response")
             io.to(friend[2]).emit("start-chat-request", user)
@@ -86,24 +87,35 @@ const socket = (server) => {
                     console.log("responseWaiters length :", responseWaiters.length)
                     responseWaiters.splice(indx, 1)
                     console.log("responseWaiters length after:", responseWaiters.length)
-
                     console.log("rooms length before delete: ", rooms.length)
                     rooms.forEach((room, index) => {
                         room.forEach((user) => {
                             if (user[2] == socket.id) {
+                                console.log("rooms length : ", rooms.length)
                                 rooms.splice(index, 1)
+                                console.log("room deleted rooms length : ", rooms.length)
                             }
                         })
                     })
-                    console.log("rooms length after delete : ", rooms.length)
                 }
 
             })
 
         })
+        socket.on("user-left", () => {
+            rooms.forEach((room, indx) => {
+                room.forEach((user, index) => {
+                    if (user[2] == socket.id) {
+                        room.splice(index, 1)
+                        io.to(room[0][2]).emit("user-left")
+                        rooms.splice(indx, 1)
+                    }
+                })
+            })
+        })
         socket.on("newMessage", (message) => {
             console.log("new message received")
-            console.log("message is : ", message)
+            console.log("rooms", rooms.length)
             rooms.forEach((room) => {
                 room.forEach((user) => {
                     if (user[2] != socket.id) {

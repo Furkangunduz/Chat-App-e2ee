@@ -28,6 +28,11 @@ function MeesageInput() {
 				onChange={(e) => {
 					setMessage(e.target.value);
 				}}
+				onKeyDown={(e) => {
+					if (e.key == 'Enter') {
+						sendMessage(message);
+					}
+				}}
 				value={message}
 				type='text'
 				className='w-[70%] px-4 py-2  bg-input-bg   rounded-lg '
