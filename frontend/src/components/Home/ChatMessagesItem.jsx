@@ -4,18 +4,18 @@ function ChatItem({ message }) {
 	let { text, sender } = message;
 	return (
 		<div
-			className={`flex flex-shrink-0 w-full my-1 px-2  ${
+			className={`flex  w-full o my-1   ${
 				sender == 'me' ? 'justify-end' : 'justify-start'
 			}`}>
-			<p
-				className={`text-left px-3 py-2 max-w-[40%]
+			<div
+				className={`px-3 py-2 text-ellipsis
                     ${
 					sender == 'me'
 						? 'bg-dark-blue text-white '
-						: 'bg-friend-text-bg text-black  pr-3'
+						: 'bg-friend-text-bg text-black pr-3'
 				}`}>
 				{text}
-			</p>
+			</div>
 		</div>
 	);
 }

@@ -1,19 +1,25 @@
 import { useState, useContext } from 'react';
 import { FiSend } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 import RSA from '../../utils/keygenerator';
 import ChatContext from '../../context/ChatContext';
+import SocketContext from '../../context/SocketContext';
 
-function MeesageInput({ socket }) {
+function MeesageInput() {
 	const [message, setMessage] = useState('');
 	const { activeChatPublicKey, setChatHistory } = useContext(ChatContext);
+	const { socket } = useContext(SocketContext);
 
 	const sendMessage = () => {
 		if (activeChatPublicKey) {
+			if (message.trim().length == 0) {
+				return;
+			}
 			socket.emit('newMessage', RSA.encrypt(RSA.encode(message), activeChatPublicKey));
 			setChatHistory((prev) => [...prev, { sender: 'me', text: message }]);
 			setMessage('');
 		} else {
-			console.log('not set public key');
+			toast.error('not set public key');
 		}
 	};
 	return (

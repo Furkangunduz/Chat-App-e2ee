@@ -13,10 +13,16 @@ function ChatMessages() {
 	return (
 		<div
 			ref={messagesRef}
-			className='max-h-[70%] w-[90%] ml-10 pt-5 overflow-y-auto overflow-x-hidden backdrop-blur-xl'>
-			{chatHistory.map((message, indx) => (
-				<ChatMessagesItem key={indx} message={message} />
-			))}
+			className='flex flex-col gap-1 max-h-[70%] w-[100%] overflow-y-auto overflow-x-hidden backdrop-blur-xl px-10'>
+			{chatHistory.length !== 0 ? (
+				chatHistory.map((message, indx) => (
+					<ChatMessagesItem key={indx} message={message} />
+				))
+			) : (
+				<p className='text-bg font-semibold text-2xl'>
+					You can start chat with the 'Start chat' button.
+				</p>
+			)}
 		</div>
 	);
 }

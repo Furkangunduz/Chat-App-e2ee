@@ -3,12 +3,12 @@ import MessageInput from './MessageInput';
 import FriendInfo from './FriendInfo';
 import ChatMessages from './ChatMessages';
 
-function Chat({ socket }) {
+function Chat() {
 	return (
-		<div className='relative min-w-[550px] h-[570px] bg-white my-10 pr-5 rounded-lg drop-shadow-lg '>
+		<div className='relative min-w-[550px] h-[570px] bg-white my-10  rounded-lg drop-shadow-lg '>
 			<FriendInfo />
 			<ChatMessages />
-			<MessageInput socket={socket} />
+			<MessageInput />
 		</div>
 	);
 }

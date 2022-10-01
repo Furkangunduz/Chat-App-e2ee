@@ -1,11 +1,13 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 
 import ChatContext from '../context/ChatContext';
+import socketContext from '../context/SocketContext';
 
-function StartChat({ socket }) {
+function StartChat() {
 	const { activeChatPublicKey, setActiveChatPublicKey } = useContext(ChatContext);
+	const { socket } = useContext(socketContext);
 
 	const startChat = () => {
 		socket.emit('start-chat-request', activeChatPublicKey);
