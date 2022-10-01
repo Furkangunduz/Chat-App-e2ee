@@ -13,7 +13,7 @@ function ChatMessages() {
 	return (
 		<div
 			ref={messagesRef}
-			className='flex flex-col gap-1 max-h-[70%] w-[100%] overflow-y-auto overflow-x-hidden backdrop-blur-xl px-10'>
+			className='flex flex-col gap-1 max-h-[70%] max-w-[100%] overflow-y-auto overflow-x-hidden backdrop-blur-xl px-10'>
 			{chatHistory.length !== 0 ? (
 				chatHistory.map((message, indx) => (
 					<ChatMessagesItem key={indx} message={message} />

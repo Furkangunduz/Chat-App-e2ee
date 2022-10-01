@@ -12,14 +12,34 @@ function MeesageInput() {
 
 	const sendMessage = () => {
 		if (activeChatPublicKey) {
-			if (message.trim().length == 0) {
+			let msg = message;
+			msg = msg.replaceAll('ş', 's');
+			if (msg.trim().length == 0) {
 				return;
+			} else if (msg.trim().length < 20) {
+				socket.emit('newMessage', RSA.encrypt(RSA.encode(msg), activeChatPublicKey));
+				setChatHistory((prev) => [...prev, { sender: 'me', text: msg }]);
+				setMessage('');
+			} else {
+				let messagesArray = [];
+				let encryptedMessagesArray = [];
+				while (true) {
+					if (msg.length <= 17) {
+						messagesArray.push(msg.substring(0, msg.length));
+						break;
+					}
+					messagesArray.push(msg.substring(0, 17));
+					msg = msg.substring(17);
+				}
+				messagesArray.forEach((message) => {
+					encryptedMessagesArray.push(
+						RSA.encrypt(RSA.encode(message), activeChatPublicKey)
+					);
+				});
+				socket.emit('newMessage', encryptedMessagesArray);
 			}
-			socket.emit('newMessage', RSA.encrypt(RSA.encode(message), activeChatPublicKey));
-			setChatHistory((prev) => [...prev, { sender: 'me', text: message }]);
-			setMessage('');
 		} else {
-			toast.error('not set public key');
+			toast.error('Cant send messaages.');
 		}
 	};
 	return (
