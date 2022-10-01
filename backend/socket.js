@@ -114,16 +114,28 @@ const socket = (server) => {
             })
         })
         socket.on("newMessage", (message) => {
-            console.log("new message received")
-            console.log("rooms", rooms.length)
-            rooms.forEach((room) => {
-                room.forEach((user) => {
-                    if (user[2] != socket.id) {
-                        io.to(user[2]).emit("newMessage", message)
-                        return
-                    }
+            if (Array.isArray(message)) {
+                rooms.forEach((room) => {
+                    room.forEach((user) => {
+                        if (user[2] != socket.id) {
+                            io.to(user[2]).emit("newMessage", message)
+                            return
+                        }
+                    })
                 })
-            })
+            } else {
+                console.log("new message received")
+                console.log("rooms", rooms.length)
+                rooms.forEach((room) => {
+                    room.forEach((user) => {
+                        if (user[2] != socket.id) {
+                            io.to(user[2]).emit("newMessage", message)
+                            return
+                        }
+                    })
+                })
+            }
+
         })
         socket.on('disconnect', () => {
             console.log("rooms.length :", rooms.length)

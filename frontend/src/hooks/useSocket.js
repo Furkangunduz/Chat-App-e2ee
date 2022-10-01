@@ -62,7 +62,19 @@ export default function useSocket() {
         })
         socket.on("newMessage", (message) => {
             console.log("message received")
-            let decryptedMessage = RSA.decode(RSA.decrypt(message, user.private_key, user.public_key))
+            console.log(message)
+            let decryptedMessage = ""
+
+            if (Array.isArray(message)) {
+                message.forEach(
+                    (msg) => {
+                        decryptedMessage += RSA.decode(RSA.decrypt(msg, user.private_key, user.public_key))
+                    }
+                )
+            } else {
+                decryptedMessage = RSA.decode(RSA.decrypt(message, user.private_key, user.public_key))
+            }
+
             setChatHistory((prev) => ([...prev, { sender: "friend", text: decryptedMessage }]))
         })
         socket.on("friend-disconnected", () => {
