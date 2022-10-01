@@ -5,18 +5,28 @@ import io from 'socket.io-client';
 
 import Usercontext from "../context/UserContext"
 import ChatContext from "../context/ChatContext";
-import RSA, { decode } from "../utils/keygenerator";
+import RSA from "../utils/keygenerator";
 
 export default function useSocket() {
     const [socket, setSocket] = useState(null)
-    const [isConnected, setIsConnected] = useState(false);
-    const [chatRequestedUserName, setChatRequestedUserName] = useState("")
     const [askUserChatRequest, setAskUserChatRequest] = useState(false);
     const navigate = useNavigate();
 
     const { user } = useContext(Usercontext)
-    const { setActiveChatUserName, setChatHistory,
+    const { setActiveChatUserName, activeChatUserName, setChatHistory,
         setActiveChatPublicKey } = useContext(ChatContext)
+
+    function showWindowConfirm() {
+        let confirmResult = window.confirm("Getting request for chat from " + activeChatUserName + ".Wanna accept ?");
+
+        if (confirmResult) {
+            socket.emit("chat-request-accepted")
+            return
+        }
+        setActiveChatUserName(null)
+        socket.emit("chat-request-declined")
+
+    }
 
     useEffect(() => {
         if (!socket) {
@@ -33,11 +43,10 @@ export default function useSocket() {
             toast("User not online.")
         })
         socket.on("start-chat-request", (user) => {
-            console.log("getting request for chat")
-            setAskUserChatRequest(true)
-            setChatRequestedUserName(user[0])
             setActiveChatUserName(user[0])
             setActiveChatPublicKey(user[1])
+            setAskUserChatRequest(true)
+            console.log("getting request for chat")
         })
         socket.on("chat-request-accepted", (friend) => {
             setActiveChatUserName(friend[0])
@@ -52,19 +61,20 @@ export default function useSocket() {
             toast("Chat request declined.", { toastId: "Chat request declined." })
         })
         socket.on("newMessage", (message) => {
-            console.log("new message received")
-            let decodedMessage = RSA.decode(RSA.decrypt(message, user.private_key, user.public_key))
-            setChatHistory((prev) => ([...prev, { sender: "friend", text: decodedMessage }]))
+            console.log("message received")
+            let decryptedMessage = RSA.decode(RSA.decrypt(message, user.private_key, user.public_key))
+            setChatHistory((prev) => ([...prev, { sender: "friend", text: decryptedMessage }]))
+        })
+        socket.on("friend-disconnected", () => {
+            toast("friend disconnected")
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         })
         socket.on('connect', () => {
-            setIsConnected(true);
             if (user)
                 socket.emit("save-user", { name: user.name, public_key: user.public_key })
         });
-        socket.on('disconnect', () => {
-            setIsConnected(false);
-        });
-
         return () => {
             socket.off('connect');
             socket.off('disconnect');
@@ -73,22 +83,16 @@ export default function useSocket() {
             socket.off("start-chat-request")
             socket.off("chat-request-accepted")
             socket.off("chat-request-declined")
+            socket.off("newMessage")
+            socket.off("friend-disconnected")
         }
     }, [socket])
 
-    function showWindowConfirm() {
-        if (window.confirm("Getting request for chat from " + chatRequestedUserName + ".Wanna accept ?")) {
-            socket.emit("chat-request-accepted")
-        } else {
-            socket.emit("chat-request-declined")
 
-        }
-    }
     if (askUserChatRequest) {
         showWindowConfirm()
-        setChatRequestedUserName(null)
         setAskUserChatRequest(false)
     }
 
-    return [socket, isConnected]
+    return socket
 }
