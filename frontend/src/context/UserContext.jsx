@@ -8,7 +8,7 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
 	//TODO Hide private key
-	const userStorage = JSON.parse(localStorage.getItem('user'));
+	const userStorage = JSON.parse(sessionStorage.getItem('user'));
 	const navigate = useNavigate();
 	const [userInfo, setUserInfo] = useState({
 		user: userStorage || null,
@@ -28,13 +28,12 @@ export const UserProvider = ({ children }) => {
 				let user = res?.data || undefined;
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
-					localStorage.setItem('user', JSON.stringify({ ...user }));
+					sessionStorage.setItem('user', JSON.stringify({ ...user }));
 					navigate('/');
 				}
 			})
 			.catch((err) => {
 				toast(err?.response?.data?.message, { toastId: err?.response?.data?.message });
-				console.log(err?.response?.data?.message);
 				console.log(err?.response?.data?.stack);
 			});
 	};
@@ -42,29 +41,26 @@ export const UserProvider = ({ children }) => {
 	const login = async (loginCredential) => {
 		axios.post(process.env.REACT_APP_API_URL + '/users/login', loginCredential)
 			.then((res) => {
-				console.log(res?.data?.user);
 				let user = res?.data || undefined;
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
-					localStorage.setItem('user', JSON.stringify(user));
+					sessionStorage.setItem('user', JSON.stringify(user));
 					navigate('/');
 				}
 			})
 			.catch((err) => {
 				toast(err?.response?.data?.message, { toastId: err?.response?.data?.message });
-				console.log(err?.response?.data?.message);
 				console.log(err?.response?.data?.stack);
 			});
 	};
 
 	const logOut = () => {
-		localStorage.removeItem('user');
+		sessionStorage.removeItem('user');
 		navigate('/login');
 	};
 
 	const AddFriend = (public_key) => {
 		if (!public_key) {
-			console.log('must provide public key.');
 			toast('must provide public key.', { toastId: ' must provide public key.' });
 			return;
 		}
@@ -81,12 +77,11 @@ export const UserProvider = ({ children }) => {
 				let user = res?.data?.user || undefined;
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
-					localStorage.setItem('user', JSON.stringify(user));
+					sessionStorage.setItem('user', JSON.stringify(user));
 				}
 			})
 			.catch((err) => {
 				toast(err?.response?.data?.message, { toastId: err?.response?.data?.message });
-				console.log(err?.response?.data?.message);
 				console.log(err?.response?.data?.stack);
 			});
 		navigate('/');
