@@ -35,12 +35,14 @@ class RSA {
         };
     }
 
-    static encrypt(encodedMsg, n, e = bigInt(65537)) {
+    static encrypt(msg, n, e = bigInt(65537)) {
+        let encodedMsg = RSA.encode(msg)
         return bigInt(encodedMsg).modPow(e, n);
     }
 
-    static decrypt(encryptedMsg, d, n) {
-        return bigInt(encryptedMsg).modPow(d, n);
+    static decrypt(msg, d, n) {
+        let decryptedMsg = bigInt(msg).modPow(d, n);
+        return RSA.decode(decryptedMsg)
     }
 
     static encode(str) {
