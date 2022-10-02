@@ -1,9 +1,13 @@
 import { useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+
 import UserContext from '../context/UserContext';
+import SocketContext from '../context/SocketContext';
 
 function Login() {
 	const { login } = useContext(UserContext);
+	const { socket } = useContext(SocketContext);
+
 	const [loginCredential, setLoginCredential] = useState({
 		email: '',
 		password: '',
@@ -16,7 +20,7 @@ function Login() {
 
 	const onSubmit = (e) => {
 		e.preventDefault();
-		login(loginCredential);
+		login(loginCredential, socket);
 	};
 	return (
 		<div className='w-full h-screen grid place-content-center bg-bg'>

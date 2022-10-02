@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import RSA from '../utils/keygenerator';
-
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -16,7 +15,7 @@ export const UserProvider = ({ children }) => {
 		message: '',
 	});
 
-	const register = (userCredential) => {
+	const register = (userCredential, socket) => {
 		let keys = generateKey();
 		axios.post(process.env.REACT_APP_API_URL + '/users', {
 			...userCredential,
@@ -29,6 +28,7 @@ export const UserProvider = ({ children }) => {
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
 					sessionStorage.setItem('user', JSON.stringify({ ...user }));
+					socket.emit('save-user', { name: user.name, public_key: user.public_key });
 					navigate('/');
 				}
 			})
@@ -38,13 +38,14 @@ export const UserProvider = ({ children }) => {
 			});
 	};
 
-	const login = async (loginCredential) => {
+	const login = async (loginCredential, socket) => {
 		axios.post(process.env.REACT_APP_API_URL + '/users/login', loginCredential)
 			.then((res) => {
 				let user = res?.data || undefined;
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
 					sessionStorage.setItem('user', JSON.stringify(user));
+					socket.emit('save-user', { name: user.name, public_key: user.public_key });
 					navigate('/');
 				}
 			})
@@ -54,8 +55,9 @@ export const UserProvider = ({ children }) => {
 			});
 	};
 
-	const logOut = () => {
+	const logOut = (socket) => {
 		sessionStorage.removeItem('user');
+		socket.emit('user-left');
 		navigate('/login');
 	};
 

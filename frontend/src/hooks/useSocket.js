@@ -17,12 +17,11 @@ export default function useSocket() {
         setActiveChatPublicKey } = useContext(ChatContext)
 
     function showWindowConfirm() {
-
         if (window.confirm("Getting request for chat from " + activeChatUserName + ".Wanna accept ?")) {
             socket.emit("chat-request-accepted")
             return
         }
-        setActiveChatUserName(null)
+        setActiveChatUserName("")
         socket.emit("chat-request-declined")
 
     }
@@ -43,15 +42,18 @@ export default function useSocket() {
         })
         socket.on("start-chat-request", (user) => {
             console.log("getting request for chat")
-            setActiveChatUserName(user[0])
-            setActiveChatPublicKey(user[1])
-            setAskUserChatRequest(true)
+            if (user) {
+                setActiveChatUserName(user[0])
+                setActiveChatPublicKey(user[1])
+                setAskUserChatRequest(true)
+            }
         })
         socket.on("chat-request-accepted", (friend) => {
-            setActiveChatUserName(friend[0])
-
-            navigate("/")
-            toast("Chat request accepted.", { toastId: "Chat request accepted." })
+            if (friend) {
+                setActiveChatUserName(friend[0])
+                navigate("/")
+                toast("Chat request accepted.", { toastId: "Chat request accepted." })
+            }
         })
         socket.on("chat-request-declined", () => {
             console.log("declined")
