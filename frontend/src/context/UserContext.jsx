@@ -28,8 +28,8 @@ export const UserProvider = ({ children }) => {
 				if (user != undefined) {
 					setUserInfo((prev) => ({ ...prev, user: user }));
 					sessionStorage.setItem('user', JSON.stringify({ ...user }));
+					navigate('/login');
 					socket.emit('save-user', { name: user.name, public_key: user.public_key });
-					navigate('/');
 				}
 			})
 			.catch((err) => {
