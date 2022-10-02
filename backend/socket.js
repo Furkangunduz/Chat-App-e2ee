@@ -38,8 +38,8 @@ const socket = (server) => {
         socket.on("user-left", () => {
             userLeft(io, socket, rooms)
         })
-        socket.on("newMessage", (message) => {
-            newMessage(io, socket, rooms, message)
+        socket.on("new-message", (messages) => {
+            newMessage(io, socket, rooms, messages)
         })
         socket.on('disconnect', () => {
             disconnect(io, socket, activeUsers, rooms)

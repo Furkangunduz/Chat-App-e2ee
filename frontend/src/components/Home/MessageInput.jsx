@@ -21,7 +21,8 @@ function MeesageInput() {
 		setChatHistory((prev) => [...prev, { sender: 'me', text: msg }]);
 
 		if (msg.length < 20) {
-			socket.emit('newMessage', RSA.encrypt(msg, activeChatPublicKey));
+			socket.emit('new-message', [RSA.encrypt(msg, activeChatPublicKey)]);
+			setMessage('');
 			return;
 		}
 
@@ -30,7 +31,7 @@ function MeesageInput() {
 		messagesArray.forEach((message) => {
 			encryptedMessagesArray.push(RSA.encrypt(message, activeChatPublicKey));
 		});
-		socket.emit('newMessage', encryptedMessagesArray);
+		socket.emit('new-message', encryptedMessagesArray);
 		setMessage('');
 	};
 

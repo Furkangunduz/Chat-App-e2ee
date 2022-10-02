@@ -59,21 +59,15 @@ export default function useSocket() {
             setActiveChatPublicKey("")
             toast("Chat request declined.", { toastId: "Chat request declined." })
         })
-        socket.on("newMessage", (message) => {
+        socket.on("new-message", (messages) => {
             console.log("message received")
-            console.log(message)
+            if (!messages) return
             let decryptedMessage = ""
-
-            if (Array.isArray(message)) {
-                message.forEach(
-                    (msg) => {
-                        decryptedMessage += RSA.decrypt(msg, user.private_key, user.public_key)
-                    }
-                )
-            } else {
-                decryptedMessage = RSA.decrypt(message, user.private_key, user.public_key)
-            }
-
+            messages.forEach(
+                (msg) => {
+                    decryptedMessage += RSA.decrypt(msg, user.private_key, user.public_key)
+                }
+            )
             setChatHistory((prev) => ([...prev, { sender: "friend", text: decryptedMessage }]))
         })
         socket.on("friend-disconnected", () => {
@@ -86,7 +80,7 @@ export default function useSocket() {
             toast("friend disconnected")
             setTimeout(() => {
                 window.location.reload();
-            }, 2000);
+            }, 3000);
         })
         socket.on('connect', () => {
             if (user)
@@ -100,7 +94,7 @@ export default function useSocket() {
             socket.off("start-chat-request")
             socket.off("chat-request-accepted")
             socket.off("chat-request-declined")
-            socket.off("newMessage")
+            socket.off("new-message")
             socket.off("friend-disconnected")
         }
     }, [socket])

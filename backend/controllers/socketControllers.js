@@ -15,25 +15,22 @@ const saveUser = (socket, activeUsers, { name, public_key }) => {
     user[2] = socket.id
     console.log(activeUsers)
 }
-
 const startChatRequest = (io, socket, activeUsers, responseWaiters, rooms, public_key) => {
-    if (!public_key) socket.emit("wrong-public-key")
-    let user = undefined
-    let friend = undefined
-    activeUsers.forEach((e) => {
-        if (e[1] == public_key) {
-            friend = e
-        }
-        if (e[2] == socket.id) {
-            user = e
-        }
-    })
-    if (user == undefined) {
-        console.log("user undefined.")
+    if (!public_key) {
+        socket.emit("wrong-public-key")
         return
     }
-    if (friend == undefined) {
-        console.log("User is not online.")
+    let user = undefined
+    let friend = undefined
+    activeUsers.forEach((activeUser) => {
+        if (activeUser[1] == public_key) {
+            friend = activeUser
+        }
+        if (activeUser[2] == socket.id) {
+            user = activeUser
+        }
+    })
+    if (user == undefined || friend == undefined) {
         socket.emit("user-not-online")
         return
     }
@@ -45,7 +42,6 @@ const startChatRequest = (io, socket, activeUsers, responseWaiters, rooms, publi
     rooms.push([user, friend])
     io.to(friend[2]).emit("start-chat-request", user)
 }
-
 const chatRequestAccepted = (io, socket, responseWaiters) => {
     responseWaiters.forEach((e, indx) => {
         if (e.from[2] == socket.id) {
@@ -73,7 +69,6 @@ const chatRequestDeclined = (io, socket, rooms, responseWaiters) => {
         }
     })
 }
-
 const userLeft = (io, socket, rooms) => {
     rooms.forEach((room, indx) => {
         room.forEach((user, index) => {
@@ -85,29 +80,18 @@ const userLeft = (io, socket, rooms) => {
         })
     })
 }
-
-const newMessage = (io, socket, rooms, message) => {
-    if (Array.isArray(message)) {
-        rooms.forEach((room) => {
-            room.forEach((user) => {
-                if (user[2] != socket.id) {
-                    io.to(user[2]).emit("newMessage", message)
-                    return
-                }
-            })
+const newMessage = (io, socket, rooms, messages) => {
+    console.log(messages)
+    if (!messages) return
+    rooms.forEach((room) => {
+        room.forEach((user) => {
+            if (user[2] != socket.id) {
+                io.to(user[2]).emit("new-message", messages)
+                return
+            }
         })
-    } else {
-        rooms.forEach((room) => {
-            room.forEach((user) => {
-                if (user[2] != socket.id) {
-                    io.to(user[2]).emit("newMessage", message)
-                    return
-                }
-            })
-        })
-    }
+    })
 }
-
 const disconnect = (io, socket, activeUsers, rooms) => {
     activeUsers.forEach((user, index) => {
         if (user[2] == socket.id) {
