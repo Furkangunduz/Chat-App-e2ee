@@ -17,13 +17,13 @@ export default function useSocket() {
         setActiveChatPublicKey } = useContext(ChatContext)
 
     function showWindowConfirm() {
+        setAskUserChatRequest(false)
         if (window.confirm("Getting request for chat from " + activeChatUserName + ".Wanna accept ?")) {
             socket.emit("chat-request-accepted")
-            return
+        } else {
+            setActiveChatUserName("")
+            socket.emit("chat-request-declined")
         }
-        setActiveChatUserName("")
-        socket.emit("chat-request-declined")
-
     }
 
     useEffect(() => {
@@ -104,7 +104,7 @@ export default function useSocket() {
 
     if (askUserChatRequest) {
         showWindowConfirm()
-        setAskUserChatRequest(false)
+
     }
 
     return socket
