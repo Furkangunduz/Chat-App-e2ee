@@ -1,3 +1,13 @@
+const {
+    saveUser,
+    startChatRequest,
+    chatRequestAccepted,
+    chatRequestDeclined,
+    userLeft,
+    newMessage,
+    disconnect
+} = require("./controllers/socketControllers")
+
 const socket = (server) => {
     //example user  [name,public_key,socketid]
     const activeUsers = []
@@ -13,149 +23,26 @@ const socket = (server) => {
 
     io.on('connection', (socket) => {
         console.log('a user connected', socket.id);
-        socket.on("save-user", ({ name, public_key }) => {
-
-            let user = undefined
-
-            activeUsers.forEach((e) => {
-                if (e[1] == public_key) {
-                    user = e
-                }
-            })
-            if (user === undefined) {
-                activeUsers.push([name, public_key, socket.id])
-                console.log("user saved")
-                return
-            }
-            user[0] = name
-            user[1] = public_key
-            user[2] = socket.id
-
-            console.log("active-users length", activeUsers.length)
+        socket.on("save-user", (user) => {
+            saveUser(socket, activeUsers, user)
         })
         socket.on("start-chat-request", (public_key) => {
-            if (!public_key) socket.emit("wrong-public-key.")
-            let user = undefined
-            let friend = undefined
-            activeUsers.forEach((e) => {
-                if (e[1] == public_key) {
-                    friend = e
-                }
-                if (e[2] == socket.id) {
-                    user = e
-                }
-            })
-            if (user == undefined) {
-                console.log("user undefined.")
-                return
-            }
-            if (friend == undefined) {
-                console.log("User is not online.")
-                socket.emit("user-not-online")
-                return
-            }
-            if (friend[2] == socket.id) {
-                console.log("cant start chat with yourself.")
-                return
-            }
-            console.log("sent request")
-            responseWaiters.push({ waiter: user, from: friend })
-            rooms.push([user, friend])
-            console.log("room created rooms length : ", rooms.length)
-            console.log("responseWaiters length ", responseWaiters.length)
-            socket.emit("waiting-response")
-            io.to(friend[2]).emit("start-chat-request", user)
+            startChatRequest(io, socket, activeUsers, responseWaiters, rooms, public_key)
         })
         socket.on("chat-request-accepted", () => {
-            console.log("chat request accepted")
-            responseWaiters.forEach((e, indx) => {
-                if (e.from[2] == socket.id) {
-                    io.to(e.waiter).emit("chat-request-accepted", e.from)
-                    console.log("responseWaiters length :", responseWaiters.length)
-                    responseWaiters.splice(indx, 1)
-                    console.log("responseWaiters length after:", responseWaiters.length)
-                }
-            })
+            chatRequestAccepted(io, socket, responseWaiters)
         })
         socket.on("chat-request-declined", () => {
-            console.log("chat request declined")
-            responseWaiters.forEach((e, indx) => {
-                if (e.from[2] == socket.id) {
-                    io.to(e.waiter[2]).emit("chat-request-declined")
-                    socket.emit("chat-request-declined")
-
-                    console.log("responseWaiters length :", responseWaiters.length)
-                    responseWaiters.splice(indx, 1)
-                    console.log("responseWaiters length after:", responseWaiters.length)
-                    console.log("rooms length before delete: ", rooms.length)
-                    rooms.forEach((room, index) => {
-                        room.forEach((user) => {
-                            if (user[2] == socket.id) {
-                                console.log("rooms length : ", rooms.length)
-                                rooms.splice(index, 1)
-                                console.log("room deleted rooms length : ", rooms.length)
-                            }
-                        })
-                    })
-                }
-
-            })
-
+            chatRequestDeclined(io, socket, rooms, responseWaiters)
         })
         socket.on("user-left", () => {
-            rooms.forEach((room, indx) => {
-                room.forEach((user, index) => {
-                    if (user[2] == socket.id) {
-                        room.splice(index, 1)
-                        io.to(room[0][2]).emit("user-left")
-                        rooms.splice(indx, 1)
-                    }
-                })
-            })
+            userLeft(io, socket, rooms)
         })
         socket.on("newMessage", (message) => {
-            if (Array.isArray(message)) {
-                rooms.forEach((room) => {
-                    room.forEach((user) => {
-                        if (user[2] != socket.id) {
-                            io.to(user[2]).emit("newMessage", message)
-                            return
-                        }
-                    })
-                })
-            } else {
-                console.log("new message received")
-                console.log("rooms", rooms.length)
-                rooms.forEach((room) => {
-                    room.forEach((user) => {
-                        if (user[2] != socket.id) {
-                            io.to(user[2]).emit("newMessage", message)
-                            return
-                        }
-                    })
-                })
-            }
-
+            newMessage(io, socket, rooms, message)
         })
         socket.on('disconnect', () => {
-            console.log("rooms.length :", rooms.length)
-            console.log("activeUsers :", rooms.length)
-            activeUsers.forEach((user, index) => {
-                if (user[2] == socket.id) {
-                    activeUsers.splice(index, 1)
-                }
-            })
-            console.log("activeUsers :", rooms.length)
-            rooms.forEach((room, indx) => {
-                room.forEach((user, index) => {
-                    if (user[2] == socket.id) {
-                        room.splice(index, 1)
-                        io.to(room[0][2]).emit("friend-disconnected")
-                        rooms.splice(indx, 1)
-                    }
-                })
-            })
-            console.log("rooms.length :", rooms.length)
+            disconnect(io, socket, activeUsers, rooms)
         });
     })
 }
