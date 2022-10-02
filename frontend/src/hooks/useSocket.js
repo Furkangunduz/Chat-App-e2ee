@@ -17,9 +17,8 @@ export default function useSocket() {
         setActiveChatPublicKey } = useContext(ChatContext)
 
     function showWindowConfirm() {
-        let confirmResult = window.confirm("Getting request for chat from " + activeChatUserName + ".Wanna accept ?");
 
-        if (confirmResult) {
+        if (window.confirm("Getting request for chat from " + activeChatUserName + ".Wanna accept ?")) {
             socket.emit("chat-request-accepted")
             return
         }
@@ -43,10 +42,10 @@ export default function useSocket() {
             toast("User not online.")
         })
         socket.on("start-chat-request", (user) => {
+            console.log("getting request for chat")
             setActiveChatUserName(user[0])
             setActiveChatPublicKey(user[1])
             setAskUserChatRequest(true)
-            console.log("getting request for chat")
         })
         socket.on("chat-request-accepted", (friend) => {
             setActiveChatUserName(friend[0])
@@ -68,11 +67,11 @@ export default function useSocket() {
             if (Array.isArray(message)) {
                 message.forEach(
                     (msg) => {
-                        decryptedMessage += RSA.decode(RSA.decrypt(msg, user.private_key, user.public_key))
+                        decryptedMessage += RSA.decrypt(msg, user.private_key, user.public_key)
                     }
                 )
             } else {
-                decryptedMessage = RSA.decode(RSA.decrypt(message, user.private_key, user.public_key))
+                decryptedMessage = RSA.decrypt(message, user.private_key, user.public_key)
             }
 
             setChatHistory((prev) => ([...prev, { sender: "friend", text: decryptedMessage }]))
