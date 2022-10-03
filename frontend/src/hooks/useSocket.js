@@ -9,22 +9,14 @@ import RSA from "../utils/keygenerator";
 
 export default function useSocket() {
     const [socket, setSocket] = useState(null)
-    const [askUserChatRequest, setAskUserChatRequest] = useState(false);
     const navigate = useNavigate();
 
     const { user } = useContext(Usercontext)
-    const { setActiveChatUserName, activeChatUserName, setChatHistory,
-        setActiveChatPublicKey } = useContext(ChatContext)
+    const { setActiveChatUserName, setChatHistory,
+        setActiveChatPublicKey,
+        setAskUserChatRequest, } = useContext(ChatContext)
 
-    function showWindowConfirm() {
-        setAskUserChatRequest(false)
-        if (window.confirm("Getting request for chat from " + activeChatUserName + ".Wanna accept ?")) {
-            socket.emit("chat-request-accepted")
-        } else {
-            setActiveChatUserName("")
-            socket.emit("chat-request-declined")
-        }
-    }
+
 
     useEffect(() => {
         if (!socket) {
@@ -102,10 +94,7 @@ export default function useSocket() {
     }, [socket])
 
 
-    if (askUserChatRequest) {
-        showWindowConfirm()
 
-    }
 
     return socket
 }

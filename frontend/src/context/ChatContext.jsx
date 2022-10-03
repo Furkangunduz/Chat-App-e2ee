@@ -5,6 +5,7 @@ const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
 	const [activeChatUserName, setActiveChatUserName] = useState(null);
 	const [activeChatPublicKey, setActiveChatPublicKey] = useState('');
+	const [askUserChatRequest, setAskUserChatRequest] = useState(false);
 	const [chatHistory, setChatHistory] = useState([]);
 
 	return (
@@ -16,6 +17,8 @@ export const ChatProvider = ({ children }) => {
 				setChatHistory,
 				activeChatPublicKey,
 				setActiveChatPublicKey,
+				askUserChatRequest,
+				setAskUserChatRequest,
 			}}>
 			{children}
 		</ChatContext.Provider>
